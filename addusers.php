@@ -30,4 +30,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <a href="users.php">← Back to user list</a>
 
 </body>
+ <footer>
+    <div class="footerText">
+      <div class="name"> 
+        <p>&copy; 2025 Malik Robinson, Ben Givens. All rights reserved.</p> 
+      </div>
+      <div class="Links">
+        <p><a href="users.php">Edit Users</a></p>
+        <p><a href="index.html">Main Page</a></p>
+        <p><a href="logout.php">Logout</a></p>
+        <p><a href="termsandcons.html">Terms and Conditions</a></p>
+        <p><a href="privacy.html">Privacy Policy</a></p>
+        <p><a href="cookie.html">Cookie Policy</a></p>  
+      </div>
+    </div>
+  </footer>
+</body>
 </html>
