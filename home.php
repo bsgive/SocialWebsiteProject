@@ -4,25 +4,32 @@ if (!isset($_SESSION['user'])) {
     header("Location: forms.php");
     exit();
 }
+include 'database.php';
 
-$posts_file = 'posts.txt';
-
-// When form is submitted, save the new post
+//save post if form submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['user_text'])) {
     $submittedText = trim($_POST['user_text']);
     if ($submittedText !== '') {
         $safeText = htmlspecialchars($submittedText);
-        $postEntry = "[" . date("Y-m-d H:i:s") . "] " . $_SESSION['user'] . ": " . $safeText . "\n";
-        file_put_contents($posts_file, $postEntry, FILE_APPEND);
+        $username = $_SESSION['user'];
+
+        $stmt = $conn->prepare("INSERT INTO posts (username, content) VALUES (?, ?)");
+        $stmt->bind_param("ss", $username, $safeText);
+        $stmt->execute();
     }
 }
 
-// Read all posts to display
+//get all posts
 $allPosts = [];
-if (file_exists($posts_file)) {
-    $allPosts = file($posts_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$result = $conn->query("SELECT * FROM posts ORDER BY created_at DESC");
+
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $allPosts[] = "[" . $row['created_at'] . "] " . htmlspecialchars($row['username']) . ": " . htmlspecialchars($row['content']);
+    }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -31,8 +38,6 @@ if (file_exists($posts_file)) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Student Social | Home Page</title>
   <link rel="stylesheet" href="stylesheets.css" /> <!-- Link CSS here -->
-  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  Bootstrap CSS link -->
 </head>
 <body>
   <div class="container">
@@ -67,8 +72,9 @@ if (file_exists($posts_file)) {
         <p>&copy; 2025 Malik Robinson, Ben Givens. All rights reserved.</p> 
       </div>
       <div class="Links">
+        <p><a href="users.php">Edit Users</a></p>
         <p><a href="index.html">Main Page</a></p>
-        <p><a href="forms.php">Sign in / Up</a></p>
+        <p><a href="logout.php">Logout</a></p>
         <p><a href="termsandcons.html">Terms and Conditions</a></p>
         <p><a href="privacy.html">Privacy Policy</a></p>
         <p><a href="cookie.html">Cookie Policy</a></p>  

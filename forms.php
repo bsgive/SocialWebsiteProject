@@ -1,27 +1,23 @@
 <?php
 session_start();
-
-$users_file = 'users.txt';
+include 'database.php'; 
 
 function saveUser($username, $email, $password) {
-    global $users_file;
+    global $conn;
     $hashed = password_hash($password, PASSWORD_DEFAULT);
-    $entry = "$username|$email|$hashed\n";
-    file_put_contents($users_file, $entry, FILE_APPEND);
+
+    $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $username, $email, $hashed);
+    return $stmt->execute();
 }
 
 function findUser($email) {
-    global $users_file;
-    if (!file_exists($users_file)) return false;
-
-    $lines = file($users_file, FILE_IGNORE_NEW_LINES);
-    foreach ($lines as $line) {
-        list($username, $storedEmail, $hashed) = explode('|', $line);
-        if (trim($storedEmail) === trim($email)) {
-            return ['username' => $username, 'email' => $storedEmail, 'password' => $hashed];
-        }
-    }
-    return false;
+    global $conn;
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_assoc();
 }
 
 $signup_error = $signin_error = '';
@@ -29,7 +25,7 @@ $signup_success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Sign Up
+    // --- SIGN UP ---
     if (isset($_POST['signup-username'])) {
         $username = trim($_POST['signup-username']);
         $email = trim($_POST['signup-email']);
@@ -41,12 +37,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (findUser($email)) {
             $signup_error = "User already exists.";
         } else {
-            saveUser($username, $email, $password);
-            $signup_success = "Account created successfully! You can now sign in.";
+            if (saveUser($username, $email, $password)) {
+                $signup_success = "Account created successfully! You can now sign in.";
+            } else {
+                $signup_error = "Error creating account. Please try again.";
+            }
         }
     }
 
-    // Sign In
+    // --- SIGN IN ---
     if (isset($_POST['signin-email'])) {
         $email = trim($_POST['signin-email']);
         $password = $_POST['signin-password'];
@@ -63,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -71,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Student Social | Sign In / Sign Up</title>
   <link rel="stylesheet" href="stylesheets.css" />  <!-- Link CSS here -->
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <!-- Bootstrap CSS link -->
   </head>
 </head>
 

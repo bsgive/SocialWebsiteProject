@@ -1,2 +1,4 @@
 malik|malikrobinson224@gmail.com|$2y$10$P8EbdArIptv2Hn10bpZ1ausEydYogjAzPhv9vvT58D2VJ73xxhMG2
 bsgive|ben.s.givens@gmail.com|$2y$10$sYrMyNf5qZFqi.fhFpb3I.mILC3oLyc796GuCSgC/osipxwJq70gu
+test|test@nic.edu|$2y$10$WK6/cQQrAN6nf8lv2vFOJ.e6NACOyuQ76pzpmF0HiVcXtCFJ7S0bu
+student|student@nic.edu|$2y$10$CHt8LxpRZRB/lHGakVTAkOHdlKHjwg78ocXrPeFvtt5puL9f8gCwW
