@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <legend><strong>Account Information</strong></legend>
 
           <label for="signup-username">Username:</label><br />
-          <input type="text" id="signup-username" name="signup-username" placeholder="Enter username" required /><br /><br />
+          <input class="signUp" type="text" id="signup-username" name="signup-username" placeholder="Enter username" required /><br /><br />
 
           <label for="signup-email">Email:</label><br />
           <input type="email" id="signup-email" name="signup-email" placeholder="example@email.com" required /><br /><br />

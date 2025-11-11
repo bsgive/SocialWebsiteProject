@@ -217,7 +217,7 @@ footer {
     flex-direction: column;
 }
 input[type="text"], input[type="email"], input[type="password"]{
-     width: 31%;
+    width: 31%;
     background-color: #f9f8ff;
     border: 2px solid #ccc;
     border-radius: 12px;
